@@ -6,48 +6,51 @@ namespace Payroll
     {
         static void Main(string[] args)
         {
-
             DateTime date = new DateTime(2023, 4, 13);
             TimeSpan zlate_threshold = TimeSpan.FromMinutes(30);
             TimeSpan zot_threshold = TimeSpan.FromMinutes(30);
+            TimeSpan lunch_break = TimeSpan.FromHours(1);
 
             // Time variables
-            DateTime dateTime_in = date.AddHours(8).AddMinutes(31);
-            DateTime dateTime_out = date.AddDays(1).AddHours(17).AddMinutes(30);
-            TimeSpan time_spent = dateTime_out - dateTime_in;
+            DateTime dateTime_in = date.AddHours(9).AddMinutes(0);
+            DateTime dateTime_out = date.AddHours(14).AddMinutes(0);
 
             // Base variables
             DateTime dateTime_base_in = date.AddHours(8).AddMinutes(0);
             DateTime dateTime_base_out = date.AddHours(17).AddMinutes(0);
             TimeSpan zremaining_time = dateTime_out.Subtract(dateTime_base_out);
             TimeSpan zlate_time = (dateTime_in > dateTime_base_in) ? dateTime_in.Subtract(dateTime_base_in) : TimeSpan.Zero;
+            bool islate = (dateTime_in > dateTime_base_in + zlate_threshold);
 
             // Rate variables
-            int zbasic_rate = 700;
-            int zot_rate = 50;
-
-            // Amount variables
-            int zbasic_amount = zbasic_rate;
-            int zot_amount = (int)zremaining_time.TotalMinutes * zot_rate;
-            double zdeduction_amount = ((dateTime_in - dateTime_base_in).TotalMinutes + (dateTime_base_out - dateTime_out).TotalMinutes) / (24 * 60);
-
-            // Percentage variables
-            double zbase_percentage = (dateTime_in - dateTime_base_in).TotalMinutes / (dateTime_base_out - dateTime_base_in).TotalMinutes;
-            double zin_out_percentage = ((dateTime_out - dateTime_in).TotalMinutes / (24 * 60)) * 100.0;
+            double late_deduction_perhour = 87.5;
+            double zbasic_rate = 700;
+            double ot_rate_perhour = 105;
 
             // reachedOT boolean variable
             bool reachedOT = (zremaining_time >= zot_threshold);
-            bool islate = (dateTime_in > dateTime_base_in + zlate_threshold);
+
             TimeSpan timelate = islate ? zlate_time : TimeSpan.Zero;
             TimeSpan ottime = reachedOT ? zremaining_time : TimeSpan.Zero;
 
-            double ot_percentage = (ottime.TotalMinutes / 60) * 100.0;
-            TimeSpan expected_render = dateTime_base_out - dateTime_base_in;
+            // Adjust the expected_render to account for the lunch break
+            TimeSpan expected_render = (dateTime_base_out - dateTime_base_in) - lunch_break;
+            TimeSpan time_spent = (dateTime_out - dateTime_in) - lunch_break;
 
+            // Percentage variables
             double timelate_percentage = (timelate.TotalMinutes / expected_render.TotalMinutes) * 100.0;
-            double rate_percentage = (time_spent >= expected_render) ? 100.0 : (reachedOT ? 100.0 : 0.0);
-            rate_percentage -= islate ? (timelate.TotalMinutes / expected_render.TotalMinutes) * 100.0 : 0.0;
+            double rate_percentage = (time_spent.TotalMinutes / expected_render.TotalMinutes) * 100.0;
 
+            // Calculate the total late deduction
+            double total_late = late_deduction_perhour * timelate.TotalHours;
+
+            // Calculate the total rate and total OT
+            double total_rate = zbasic_rate * rate_percentage / 100.0;
+            double ot_percentage = (ottime.TotalMinutes / 60) * 100.0;
+            double total_ot = ot_rate_perhour * ot_percentage / 100.0;
+
+            // Calculate the take-home pay
+            double takehome = (total_rate + total_ot) - total_late;
             Console.WriteLine("dateTime_in = " + dateTime_in);
             Console.WriteLine("dateTime_out = " + dateTime_out);
             Console.WriteLine("time_spent = " + time_spent);
@@ -58,24 +61,18 @@ namespace Payroll
             Console.WriteLine("zremaining_time = " + zremaining_time);
             Console.WriteLine("zlate_time = " + zlate_time);
             Console.WriteLine("zbasic_rate = " + zbasic_rate);
-            Console.WriteLine("zot_rate = " + zot_rate);
-            Console.WriteLine("zbasic_amount = " + zbasic_amount);
-            Console.WriteLine("zot_amount = " + zot_amount);
-            Console.WriteLine("zdeduction_amount = " + zdeduction_amount);
-            Console.WriteLine("zbase_percentage = " + zbase_percentage);
-            Console.WriteLine("zin_out_percentage = " + zin_out_percentage);
+            Console.WriteLine("zot_rate = " + ot_rate_perhour);
             Console.WriteLine("reachedOT = " + reachedOT);
             Console.WriteLine("islate = " + islate);
 
             Console.WriteLine("timelate = " + timelate);
 
             Console.WriteLine("ottime = " + ottime);
-            Console.WriteLine("expected_render = " + expected_render);
-            Console.WriteLine("rate_percentage = " + rate_percentage);
-            Console.WriteLine("ot_percentage = " + ot_percentage);
-            Console.WriteLine("timelate_percentage = " + timelate_percentage);
 
-
+            Console.WriteLine("total_rate = " + total_rate);
+            Console.WriteLine("total_ot = " + total_ot);
+            Console.WriteLine("total_late = " + total_late);
+            Console.WriteLine("takehome = " + takehome);
 
 
         }

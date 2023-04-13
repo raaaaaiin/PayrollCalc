@@ -7,16 +7,19 @@ namespace Payroll
         static void Main(string[] args)
         {
 
-            TimeSpan ztime_in = TimeSpan.Parse("8:30");
-            TimeSpan ztime_out = TimeSpan.Parse("9:30");
-            TimeSpan zlate_threshold = ztime_in.Add(TimeSpan.FromMinutes(30));
-            TimeSpan zot_threshold = ztime_out.Add(TimeSpan.FromMinutes(30));
+            DateTime date = new DateTime(2023, 4, 13);
+            TimeSpan zlate_threshold = TimeSpan.FromMinutes(30);
+            TimeSpan zot_threshold = TimeSpan.FromMinutes(30);
+
+            // Time variables
+            DateTime dateTime_in = date.AddHours(8).AddMinutes(0);
+            DateTime dateTime_out = date.AddHours(9).AddMinutes(0);
 
             // Base variables
-            TimeSpan zbase_in = TimeSpan.Parse("8:30");
-            TimeSpan zbase_out = TimeSpan.Parse("10:45");
-            TimeSpan zremaining_time = ztime_out.Subtract(zbase_out);
-            TimeSpan zlate_time = (ztime_in > zbase_in) ? ztime_in.Subtract(zbase_in) : TimeSpan.Zero;
+            DateTime dateTime_base_in = date.AddHours(8).AddMinutes(30);
+            DateTime dateTime_base_out = date.AddHours(10).AddMinutes(45);
+            TimeSpan zremaining_time = dateTime_out.Subtract(dateTime_base_out);
+            TimeSpan zlate_time = (dateTime_in > dateTime_base_in) ? dateTime_in.Subtract(dateTime_base_in) : TimeSpan.Zero;
 
             // Rate variables
             int zbasic_rate = 700;
@@ -25,18 +28,18 @@ namespace Payroll
             // Amount variables
             int zbasic_amount = zbasic_rate;
             int zot_amount = (int)zremaining_time.TotalMinutes * zot_rate;
-            double zdeduction_amount = ((ztime_in - zbase_in).TotalMinutes + (zbase_out - ztime_out).TotalMinutes) / (24 * 60);
+            double zdeduction_amount = ((dateTime_in - dateTime_base_in).TotalMinutes + (dateTime_base_out - dateTime_out).TotalMinutes) / (24 * 60);
 
             // Percentage variables
-            double zbase_percentage = (ztime_in - zbase_in).TotalMinutes / (zbase_out - zbase_in).TotalMinutes;
-            double zin_out_percentage = ((ztime_out - ztime_in).TotalMinutes / (24 * 60)) * 100.0;
+            double zbase_percentage = (dateTime_in - dateTime_base_in).TotalMinutes / (dateTime_base_out - dateTime_base_in).TotalMinutes;
+            double zin_out_percentage = ((dateTime_out - dateTime_in).TotalMinutes / (24 * 60)) * 100.0;
 
-            Console.WriteLine("ztime_in = " + ztime_in);
-            Console.WriteLine("ztime_out = " + ztime_out);
+            Console.WriteLine("dateTime_in = " + dateTime_in);
+            Console.WriteLine("dateTime_out = " + dateTime_out);
             Console.WriteLine("zlate_threshold = " + zlate_threshold);
             Console.WriteLine("zot_threshold = " + zot_threshold);
-            Console.WriteLine("zbase_in = " + zbase_in);
-            Console.WriteLine("zbase_out = " + zbase_out);
+            Console.WriteLine("dateTime_base_in = " + dateTime_base_in);
+            Console.WriteLine("dateTime_base_out = " + dateTime_base_out);
             Console.WriteLine("zremaining_time = " + zremaining_time);
             Console.WriteLine("zlate_time = " + zlate_time);
             Console.WriteLine("zbasic_rate = " + zbasic_rate);

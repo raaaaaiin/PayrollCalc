@@ -13,7 +13,7 @@ namespace Payroll
 
             // Time variables
             DateTime dateTime_in = date.AddHours(8).AddMinutes(31);
-            DateTime dateTime_out = date.AddHours(17).AddMinutes(30);
+            DateTime dateTime_out = date.AddDays(1).AddHours(17).AddMinutes(30);
             TimeSpan time_spent = dateTime_out - dateTime_in;
 
             // Base variables
@@ -45,7 +45,8 @@ namespace Payroll
             TimeSpan expected_render = dateTime_base_out - dateTime_base_in;
 
             double timelate_percentage = (timelate.TotalMinutes / expected_render.TotalMinutes) * 100.0;
-
+            double rate_percentage = (time_spent >= expected_render) ? 100.0 : (reachedOT ? 100.0 : 0.0);
+            rate_percentage -= islate ? (timelate.TotalMinutes / expected_render.TotalMinutes) * 100.0 : 0.0;
 
             Console.WriteLine("dateTime_in = " + dateTime_in);
             Console.WriteLine("dateTime_out = " + dateTime_out);
@@ -69,9 +70,12 @@ namespace Payroll
             Console.WriteLine("timelate = " + timelate);
 
             Console.WriteLine("ottime = " + ottime);
+            Console.WriteLine("expected_render = " + expected_render);
+            Console.WriteLine("rate_percentage = " + rate_percentage);
             Console.WriteLine("ot_percentage = " + ot_percentage);
             Console.WriteLine("timelate_percentage = " + timelate_percentage);
-            Console.WriteLine("expected_render = " + expected_render);
+
+
 
 
         }

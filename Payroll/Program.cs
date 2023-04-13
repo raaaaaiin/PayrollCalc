@@ -13,11 +13,12 @@ namespace Payroll
 
             // Time variables
             DateTime dateTime_in = date.AddHours(8).AddMinutes(0);
-            DateTime dateTime_out = date.AddHours(9).AddMinutes(0);
+            DateTime dateTime_out = date.AddHours(17).AddMinutes(0);
+            TimeSpan time_spent = dateTime_out - dateTime_in;
 
             // Base variables
-            DateTime dateTime_base_in = date.AddHours(8).AddMinutes(30);
-            DateTime dateTime_base_out = date.AddHours(10).AddMinutes(45);
+            DateTime dateTime_base_in = date.AddHours(8).AddMinutes(0);
+            DateTime dateTime_base_out = date.AddHours(17).AddMinutes(0);
             TimeSpan zremaining_time = dateTime_out.Subtract(dateTime_base_out);
             TimeSpan zlate_time = (dateTime_in > dateTime_base_in) ? dateTime_in.Subtract(dateTime_base_in) : TimeSpan.Zero;
 
@@ -36,6 +37,7 @@ namespace Payroll
 
             Console.WriteLine("dateTime_in = " + dateTime_in);
             Console.WriteLine("dateTime_out = " + dateTime_out);
+            Console.WriteLine("time_spent = " + time_spent);
             Console.WriteLine("zlate_threshold = " + zlate_threshold);
             Console.WriteLine("zot_threshold = " + zot_threshold);
             Console.WriteLine("dateTime_base_in = " + dateTime_base_in);
@@ -49,6 +51,7 @@ namespace Payroll
             Console.WriteLine("zdeduction_amount = " + zdeduction_amount);
             Console.WriteLine("zbase_percentage = " + zbase_percentage);
             Console.WriteLine("zin_out_percentage = " + zin_out_percentage);
+
 
 
 

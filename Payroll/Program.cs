@@ -13,8 +13,8 @@ namespace Payroll
             TimeSpan lunch_break = TimeSpan.FromHours(1);
 
             // Time variables
-            DateTime dateTime_in = date.AddHours(8).AddMinutes(0);
-            DateTime dateTime_out = date.AddHours(17).AddMinutes(0);
+            DateTime dateTime_in = date.AddHours(9).AddMinutes(30);
+            DateTime dateTime_out = date.AddHours(17).AddMinutes(00);
 
             // Base variables
             DateTime dateTime_base_in = date.AddHours(8).AddMinutes(0);
@@ -31,7 +31,8 @@ namespace Payroll
             // reachedOT boolean variable
             bool reachedOT = (zremaining_time >= zot_threshold);
 
-            TimeSpan timelate = islate ? zlate_time : TimeSpan.Zero;
+            // Adjust timelate variable based on the 30-minute threshold
+            TimeSpan timelate = islate ? TimeSpan.FromHours((zlate_time.Minutes >= 30) ? Math.Ceiling(zlate_time.TotalHours) : Math.Floor(zlate_time.TotalHours)) : TimeSpan.Zero;
             TimeSpan ottime = reachedOT ? zremaining_time : TimeSpan.Zero;
 
             // Adjust the expected_render to account for the lunch break
@@ -51,7 +52,7 @@ namespace Payroll
 
             // Percentage variables
             double timelate_percentage = (timelate.TotalMinutes / expected_render.TotalMinutes) * 100.0;
-            double rate_percentage = (roundedTimeSpent.TotalMinutes / expected_render.TotalMinutes) * 100.0;
+            double rate_percentage = (reachedOT) ? 100.0 : (roundedTimeSpent.TotalMinutes / expected_render.TotalMinutes) * 100.0;
             double ot_percentage = (roundedOtTime.TotalMinutes / 60) * 100.0;
 
             // Calculate the total late deduction
@@ -60,10 +61,8 @@ namespace Payroll
             // Calculate the total rate and total OT
             double total_rate = zbasic_rate * rate_percentage / 100.0;
             double total_ot = ot_rate_perhour * ot_percentage / 100.0;
-
             // Calculate the take-home pay
             double takehome = (total_rate + total_ot) - total_late;
-
 
             Console.WriteLine("dateTime_in = " + dateTime_in);
             Console.WriteLine("dateTime_out = " + dateTime_out);
@@ -75,7 +74,6 @@ namespace Payroll
             Console.WriteLine("total_ot = " + total_ot);
             Console.WriteLine("total_late = " + total_late);
             Console.WriteLine("takehome = " + takehome);
-
 
         }
     }

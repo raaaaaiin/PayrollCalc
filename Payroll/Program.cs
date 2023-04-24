@@ -6,15 +6,14 @@ namespace Payroll
     {
         static void Main(string[] args)
         {
-
             DateTime date = new DateTime(2023, 4, 13);
             TimeSpan zlate_threshold = TimeSpan.FromMinutes(30);
             TimeSpan zot_threshold = TimeSpan.FromMinutes(30);
             TimeSpan lunch_break = TimeSpan.FromHours(1);
-
+            DateTime dateout = DateTime.Today;
             // Time variables
-            DateTime dateTime_in = date.AddHours(9).AddMinutes(30);
-            DateTime dateTime_out = date.AddHours(17).AddMinutes(00);
+            DateTime dateTime_in = date.AddHours(8).AddMinutes(31);
+            DateTime dateTime_out = date.AddHours(19).AddMinutes(00);
 
             // Base variables
             DateTime dateTime_base_in = date.AddHours(8).AddMinutes(0);
@@ -24,9 +23,9 @@ namespace Payroll
             bool islate = (dateTime_in > dateTime_base_in + zlate_threshold);
 
             // Rate variables
-            double late_deduction_perhour = 87.5;
-            double zbasic_rate = 700;
-            double ot_rate_perhour = 105;
+            double late_deduction_perhour = 75;
+            double zbasic_rate = 600;
+            double ot_rate_perhour = 90;
 
             // reachedOT boolean variable
             bool reachedOT = (zremaining_time >= zot_threshold);
@@ -43,7 +42,7 @@ namespace Payroll
             bool within10Mins = (dateTime_out.Minute >= 50);
 
             // Round the time spent according to the rules
-            int roundedHours = within10Mins ? (int)Math.Ceiling(time_spent.TotalHours) : (int)Math.Floor(time_spent.TotalHours);
+            int roundedHours = within10Mins ? (int)Math.Ceiling(time_spent.TotalHours) : (int)Math.Ceiling(time_spent.TotalHours);
             TimeSpan roundedTimeSpent = TimeSpan.FromHours(roundedHours);
 
             // Round the OT time according to the rules
@@ -56,13 +55,31 @@ namespace Payroll
             double ot_percentage = (roundedOtTime.TotalMinutes / 60) * 100.0;
 
             // Calculate the total late deduction
-            double total_late = late_deduction_perhour * timelate.TotalHours;
+            double total_late = islate ? late_deduction_perhour * timelate.TotalHours : 0;
 
             // Calculate the total rate and total OT
-            double total_rate = zbasic_rate * rate_percentage / 100.0;
+            double total_rate = zbasic_rate;
             double total_ot = ot_rate_perhour * ot_percentage / 100.0;
             // Calculate the take-home pay
             double takehome = (total_rate + total_ot) - total_late;
+            Console.WriteLine("dateTime_in = " + dateTime_in);
+            Console.WriteLine("dateTi;me_out = " + dateTime_out);
+            Console.WriteLine("time_spent = " + time_spent);
+            Console.WriteLine("zlate_threshold = " + zlate_threshold);
+            Console.WriteLine("zot_threshold = " + zot_threshold);
+            Console.WriteLine("dateTime_base_in = " + dateTime_base_in);
+            Console.WriteLine("dateTime_base_out = " + dateTime_base_out);
+            Console.WriteLine("zremaining_time = " + zremaining_time);
+            Console.WriteLine("zlate_time = " + zlate_time);
+            Console.WriteLine("zbasic_rate = " + zbasic_rate);
+            Console.WriteLine("zot_rate = " + ot_rate_perhour);
+            Console.WriteLine("reachedOT = " + reachedOT);
+            Console.WriteLine("islate = " + islate);
+
+            Console.WriteLine("timelate = " + timelate);
+
+            Console.WriteLine("ottime = " + ottime);
+
 
             Console.WriteLine("dateTime_in = " + dateTime_in);
             Console.WriteLine("dateTime_out = " + dateTime_out);
@@ -74,6 +91,7 @@ namespace Payroll
             Console.WriteLine("total_ot = " + total_ot);
             Console.WriteLine("total_late = " + total_late);
             Console.WriteLine("takehome = " + takehome);
+            Console.WriteLine("dateout = " + dateout);
 
         }
     }

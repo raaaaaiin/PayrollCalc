@@ -12,20 +12,23 @@ namespace Payroll
             TimeSpan lunch_break = TimeSpan.FromHours(1);
             DateTime dateout = DateTime.Today;
             // Time variables
-            DateTime dateTime_in = date.AddHours(8).AddMinutes(31);
-            DateTime dateTime_out = date.AddHours(19).AddMinutes(00);
+            DateTime dateTime_in = date.AddHours(9).AddMinutes(00);
+            DateTime dateTime_out = date.AddHours(18).AddMinutes(00);
 
             // Base variables
             DateTime dateTime_base_in = date.AddHours(8).AddMinutes(0);
             DateTime dateTime_base_out = date.AddHours(17).AddMinutes(0);
+            
+            // Rate variables
+            double late_deduction_perhour = 85.5;
+            double zbasic_rate = 700;
+            double ot_rate_perhour = 105;
+
+
+
             TimeSpan zremaining_time = dateTime_out.Subtract(dateTime_base_out);
             TimeSpan zlate_time = (dateTime_in > dateTime_base_in) ? dateTime_in.Subtract(dateTime_base_in) : TimeSpan.Zero;
             bool islate = (dateTime_in > dateTime_base_in + zlate_threshold);
-
-            // Rate variables
-            double late_deduction_perhour = 75;
-            double zbasic_rate = 600;
-            double ot_rate_perhour = 90;
 
             // reachedOT boolean variable
             bool reachedOT = (zremaining_time >= zot_threshold);
@@ -58,7 +61,8 @@ namespace Payroll
             double total_late = islate ? late_deduction_perhour * timelate.TotalHours : 0;
 
             // Calculate the total rate and total OT
-            double total_rate = zbasic_rate;
+            double total_rate = (zbasic_rate) * (roundedTimeSpent > TimeSpan.FromHours(8) ? 1.0 : roundedTimeSpent.TotalHours / 8);
+
             double total_ot = ot_rate_perhour * ot_percentage / 100.0;
             // Calculate the take-home pay
             double takehome = (total_rate + total_ot) - total_late;

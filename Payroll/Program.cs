@@ -12,8 +12,8 @@ namespace Payroll
             TimeSpan lunch_break = TimeSpan.FromHours(1);
             DateTime dateout = DateTime.Today;
             // Time variables
-            DateTime dateTime_in = date.AddHours(8).AddMinutes(30);
-            DateTime dateTime_out = date.AddHours(15).AddMinutes(00);
+            DateTime dateTime_in = date.AddHours(8).AddMinutes(33);
+            DateTime dateTime_out = date.AddHours(12).AddMinutes(00);
 
             // Base variables
             DateTime dateTime_base_in = date.AddHours(8).AddMinutes(0);
@@ -58,7 +58,7 @@ namespace Payroll
             double ot_percentage = (roundedOtTime.TotalMinutes / 60) * 100.0;
 
             // Calculate the total late deduction
-            double total_late = islate ? late_deduction_perhour * timelate.TotalHours : 0;
+            double total_late = roundedTimeSpent > TimeSpan.FromHours(4) ? (islate ? late_deduction_perhour * timelate.TotalHours : 0) : 0;
 
             // Calculate the total rate and total OT
             double total_rate = (zbasic_rate) * (roundedTimeSpent > TimeSpan.FromHours(4) ? 1.0 : roundedTimeSpent.TotalHours / 8);
